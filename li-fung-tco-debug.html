@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Li & Fung TCO Analysis Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+      color: #1a1a1a;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 60px 40px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .logo {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 600;
+      color: #000000;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+
+    .header-text p {
+      font-size: clamp(12px, 2vw, 14px);
+      color: #666666;
+      font-weight: 400;
+    }
+
+    .input-section {
+      background: white;
+      border: 1px solid #e5e5e5;
+      padding: clamp(24px, 4vw, 32px);
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #666666;
+      margin-bottom: 24px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .input-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333333;
+      margin-bottom: 8px;
+    }
+
+    .input-field input,
+    .input-field select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d4d4d4;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1a1a1a;
+      transition: border-color 0.15s;
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .input-field input:focus,
+    .input-field select:focus {
+      outline: none;
+      border-color: #E90712;
+    }
+
+    .input-help {
+      display: block;
+      font-size: 11px;
+      color: #999999;
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    .calculate-button {
+      width: 100%;
+      padding: 14px 24px;
+      background: #E90712;
+      color: white;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .calculate-button:hover {
+      background: #c00610;
+    }
+
+    .calculate-button:active {
+      transform: scale(0.98);
+    }
+
+    .summary-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #e5e5e5;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .summary-card.direct {
+      border-left: 3px solid #9e9e9e;
+    }
+
+    .summary-card.lifung {
+      border-left: 3px solid #1565c0;
+    }
+
+    .summary-card.savings {
+      border-left: 3px solid #2e7d32;
+      background: #f1f8f4;
+    }
+
+    .summary-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #666666;
+      margin-bottom: 12px;
+    }
+
+    .summary-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .summary-card.savings .summary-value {
+      color: #2e7d32;
+    }
+
+    .summary-subtext {
+      font-size: 13px;
+      color: #666666;
+      font-weight: 400;
+    }
+
+    .charts-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .chart-container {
+      background: white;
+      border: 1px solid #e5e5e5;
+      padding: 24px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #666666;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .table-wrapper {
+      background: white;
+      border: 1px solid #e5e5e5;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 40px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: #fafafa;
+      border-bottom: 2px solid #e5e5e5;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    thead th {
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #666666;
+      white-space: nowrap;
+    }
+
+    thead th:nth-child(2) {
+      text-align: center;
+      background: #f5f5f5;
+      color: #424242;
+      border-left: 2px solid #9e9e9e;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    thead th:nth-child(3) {
+      text-align: center;
+      background: #f0f4f8;
+      color: #1565c0;
+      border-left: 1px solid #e0e0e0;
+      border-right: 2px solid #1565c0;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tbody tr:hover {
+      background: #fafafa;
+    }
+
+    tbody td {
+      padding: 18px 20px;
+      vertical-align: top;
+    }
+
+    tbody td:nth-child(2) {
+      border-left: 2px solid #9e9e9e;
+      border-right: 1px solid #e0e0e0;
+      background: #fafafa;
+    }
+
+    tbody td:nth-child(3) {
+      border-left: 1px solid #e0e0e0;
+      border-right: 2px solid #1565c0;
+      background: #f8fbfd;
+    }
+
+    tbody tr.category-row {
+      background: #f5f5f5;
+      border-top: 2px solid #e0e0e0;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    tbody tr.category-row td {
+      padding: 12px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #757575;
+    }
+
+    tbody tr.category-row td:nth-child(2),
+    tbody tr.category-row td:nth-child(3) {
+      background: #f5f5f5;
+    }
+
+    tbody tr.total-row {
+      background: #263238;
+      color: white;
+      font-weight: 600;
+    }
+
+    tbody tr.total-row td {
+      padding: 20px;
+      font-size: 15px;
+      border: none;
+    }
+
+    tbody tr.total-row td:nth-child(2),
+    tbody tr.total-row td:nth-child(3) {
+      background: #263238;
+      text-align: center;
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .cost-label {
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .cost-sublabel {
+      font-size: 12px;
+      color: #757575;
+      font-weight: 400;
+    }
+
+    .cost-value {
+      text-align: center;
+      font-weight: 600;
+      color: #1a1a1a;
+      font-size: 15px;
+    }
+
+    .included-badge {
+      display: inline-block;
+      font-size: 12px;
+      color: #1565c0;
+      font-weight: 500;
+    }
+
+    .impact-text {
+      color: #424242;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .risk-note {
+      font-size: 11px;
+      color: #999999;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .download-section {
+      background: white;
+      border: 1px solid #e5e5e5;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .download-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #666666;
+      margin-bottom: 20px;
+    }
+
+    .download-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .download-btn {
+      padding: 12px 28px;
+      background: white;
+      border: 1px solid #d4d4d4;
+      color: #333333;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .download-btn:hover {
+      background: #fafafa;
+      border-color: #999999;
+    }
+
+    .download-btn.primary {
+      background: #E90712;
+      color: white;
+      border-color: #E90712;
+    }
+
+    .download-btn.primary:hover {
+      background: #c00610;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 40px 20px;
+      }
+      .charts-section {
+        grid-template-columns: 1fr;
+      }
+      .summary-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      .input-section,
+      .download-section {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <img src="https://cdn.brandfetch.io/idX8OEsFLl/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1778719549322" alt="Li & Fung Logo">
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>TrueCost Calculator — Value Position Analysis Tool</h1>
+        <p id="regionDisplay">Greater ASEAN Region</p>
+      </div>
+    </div>
+
+    <div class="input-section">
+      <div class="section-title">Configure Your Sourcing Parameters</div>
+      <div class="input-grid">
+        <div class="input-field">
+          <label for="units">Units per SKU</label>
+          <input type="number" id="units" value="5000" min="100" step="100">
+          <span class="input-help">Typical order quantity per product</span>
+        </div>
+        <div class="input-field">
+          <label for="skus">Number of SKUs</label>
+          <input type="number" id="skus" value="20" min="1" step="1">
+          <span class="input-help">Different products per year</span>
+        </div>
+        <div class="input-field">
+          <label for="fob">FOB Price per Unit ($)</label>
+          <input type="number" id="fob" value="8.00" min="0.1" step="0.1">
+          <span class="input-help">Factory price (Free on Board)</span>
+        </div>
+        <div class="input-field">
+          <label for="region">Sourcing Region</label>
+          <select id="region">
+            <option value="asean">Greater ASEAN (VN, ID, BD, KR, TW)</option>
+            <option value="china">China</option>
+            <option value="south-asia">South Asia (IN, BD, PK)</option>
+            <option value="latin-america">Latin America (MX, BR, CO)</option>
+          </select>
+          <span class="input-help">Primary sourcing markets</span>
+        </div>
+        <div class="input-field">
+          <label for="lifungFee">Li & Fung Service Fee (%)</label>
+          <input type="number" id="lifungFee" value="4" min="2" max="6" step="0.5">
+          <span class="input-help">Typical range: 3-5%</span>
+        </div>
+        <div class="input-field">
+          <label for="directFailRate">Direct Sourcing Fail Rate (%)</label>
+          <input type="number" id="directFailRate" value="3.5" min="0" max="10" step="0.1">
+          <span class="input-help">Quality rejection rate</span>
+        </div>
+      </div>
+      <button class="calculate-button" onclick="calculateTCO()">Calculate TCO Comparison</button>
+    </div>
+
+    <div id="results" style="display: none;">
+      <div class="summary-section">
+        <div class="summary-card direct">
+          <div class="summary-label">✕ Direct Factory Sourcing</div>
+          <div class="summary-value" id="directTotal">$949,000</div>
+          <div class="summary-subtext">+ unquantified risks</div>
+        </div>
+        <div class="summary-card lifung">
+          <div class="summary-label">✓ Through Li & Fung</div>
+          <div class="summary-value" id="lifungTotal">$844,020</div>
+          <div class="summary-subtext">Risk-managed, all-inclusive</div>
+        </div>
+        <div class="summary-card savings">
+          <div class="summary-label">Annual Savings</div>
+          <div class="summary-value" id="savings">$104,980</div>
+          <div class="summary-subtext" id="savingsPercent">11.1% cost reduction</div>
+        </div>
+      </div>
+
+      <div class="charts-section">
+        <div class="chart-container">
+          <div class="chart-title">Cost Comparison</div>
+          <canvas id="comparisonChart" style="max-height: 300px;"></canvas>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Hidden Cost Breakdown (Direct Sourcing)</div>
+          <canvas id="breakdownChart" style="max-height: 300px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Cost Category</th>
+            <th>✕ Direct Factory Sourcing</th>
+            <th>✓ Through Li & Fung</th>
+            <th>Client Impact</th>
+          </tr>
+        </thead>
+        <tbody id="costTableBody"></tbody>
+      </table>
+    </div>
+
+    <div id="downloadSection" class="download-section" style="display: none;">
+      <div class="download-title">Export Your Analysis</div>
+      <div class="download-buttons">
+        <button class="download-btn primary" onclick="window.print()">Download PDF</button>
+        <button class="download-btn" onclick="downloadExcel()">Export to Excel</button>
+        <button class="download-btn" onclick="shareAnalysis()">Share Analysis</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let comparisonChart = null;
+    let breakdownChart = null;
+
+    const regionData = {
+      'asean': { name: 'Greater ASEAN Region', travelCost: 18000, markets: 'VN, ID, BD, KR, TW', complexity: 1.0 },
+      'china': { name: 'China', travelCost: 12000, markets: 'Multiple provinces', complexity: 0.8 },
+      'south-asia': { name: 'South Asia', travelCost: 15000, markets: 'IN, BD, PK', complexity: 0.9 },
+      'latin-america': { name: 'Latin America', travelCost: 25000, markets: 'MX, BR, CO', complexity: 1.3 }
+    };
+
+    function calculateTCO() {
+      console.log('✅ calculateTCO called!');
+      try {
+      const units = parseFloat(document.getElementById('units').value);
+      const skus = parseFloat(document.getElementById('skus').value);
+      const fob = parseFloat(document.getElementById('fob').value);
+      const lifungFeePercent = parseFloat(document.getElementById('lifungFee').value);
+      const directFailRate = parseFloat(document.getElementById('directFailRate').value) / 100;
+      const region = document.getElementById('region').value;
+      const regionInfo = regionData[region];
+      
+      document.getElementById('regionDisplay').textContent = regionInfo.name;
+
+      const orderValue = units * fob * skus;
+      const lifungFee = orderValue * (lifungFeePercent / 100);
+      const scaleFactor = orderValue / 800000;
+      
+      const costs = {
+        productCost: orderValue,
+        sourcingTeam: 50000 * scaleFactor * regionInfo.complexity,
+        factoryVisits: regionInfo.travelCost * scaleFactor,
+        supplierCoord: 12000 * scaleFactor * regionInfo.complexity,
+        qualityControl: 16000 * scaleFactor,
+        reworkDirect: orderValue * directFailRate,
+        reworkLifung: orderValue * 0.0119,
+        complianceAudit: 15000 * scaleFactor * regionInfo.complexity,
+        delayPenaltyDirect: 10000 * scaleFactor,
+        delayPenaltyLifung: 2500 * scaleFactor
+      };
+
+      const directTotal = costs.productCost + costs.sourcingTeam + costs.factoryVisits + 
+                         costs.supplierCoord + costs.qualityControl + costs.reworkDirect + 
+                         costs.complianceAudit + costs.delayPenaltyDirect;
+      
+      const lifungTotal = costs.productCost + lifungFee + costs.reworkLifung + costs.delayPenaltyLifung;
+      const savings = directTotal - lifungTotal;
+      const savingsPercent = (savings / directTotal * 100).toFixed(1);
+
+      document.getElementById('directTotal').textContent = formatCurrency(directTotal);
+      document.getElementById('lifungTotal').textContent = formatCurrency(lifungTotal);
+      document.getElementById('savings').textContent = formatCurrency(savings);
+      document.getElementById('savingsPercent').textContent = savingsPercent + '% cost reduction';
+
+      buildTable(costs, orderValue, lifungFee, units, fob, skus, lifungFeePercent, directFailRate, regionInfo, directTotal, lifungTotal);
+      createCharts(directTotal, lifungTotal, costs);
+
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('downloadSection').style.display = 'block';
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+      } catch(error) {
+        console.error('❌ ERROR in calculateTCO:', error);
+        alert('Error: ' + error.message);
+      }
+    }
+
+    function buildTable(costs, orderValue, lifungFee, units, fob, skus, feePercent, failRate, regionInfo, directTotal, lifungTotal) {
+      const tbody = document.getElementById('costTableBody');
+      tbody.innerHTML = `
+        <tr class="category-row"><td colspan="4">Visible Costs</td></tr>
+        <tr>
+          <td><div class="cost-label">Product Cost (FOB)</div><div class="cost-sublabel">${formatNumber(units)} units × $${fob.toFixed(2)} × ${formatNumber(skus)} SKUs</div></td>
+          <td class="cost-value">${formatCurrency(costs.productCost)}</td>
+          <td class="cost-value">${formatCurrency(costs.productCost)}</td>
+          <td class="impact-text">Base product cost identical regardless of sourcing approach.</td>
+        </tr>
+        <tr>
+          <td><div class="cost-label">Li & Fung Service Fee</div><div class="cost-sublabel">${feePercent}% of order value</div></td>
+          <td class="cost-value">$0</td>
+          <td class="cost-value">${formatCurrency(lifungFee)}</td>
+          <td class="impact-text">Most visible differential; represents coordination services detailed below.</td>
+        </tr>
+        <tr class="category-row"><td colspan="4">Hidden Costs — Internal Operations</td></tr>
+        <tr>
+          <td><div class="cost-label">Internal Sourcing Team</div><div class="cost-sublabel">Coordination, follow-up, escalation</div></td>
+          <td class="cost-value">${formatCurrency(costs.sourcingTeam)}</td>
+          <td class="cost-value"><span class="included-badge">Included ✓</span></td>
+          <td class="impact-text">Direct sourcing requires dedicated headcount for supplier management across multiple markets.</td>
+        </tr>
+        <tr>
+          <td><div class="cost-label">Factory Visits & Travel</div><div class="cost-sublabel">Multi-market: ${regionInfo.markets}</div></td>
+          <td class="cost-value">${formatCurrency(costs.factoryVisits)}</td>
+          <td class="cost-value"><span class="included-badge">Included ✓</span></td>
+          <td class="impact-text">On-ground presence across 41 offices in 40 markets eliminates client travel requirements. Travel costs vary by region (${regionInfo.name}: $${formatNumber(regionInfo.travelCost)} base).</td>
+        </tr>
+        <tr>
+          <td><div class="cost-label">Supplier Coordination</div><div class="cost-sublabel">Communication, follow-ups, multi-language</div></td>
+          <td class="cost-value">${formatCurrency(costs.supplierCoord)}</td>
+          <td class="cost-value"><span class="included-badge">Included ✓</span></td>
+          <td class="impact-text">Consolidated interface replaces fragmented multi-party supplier communications.</td>
+        </tr>
+        <tr class="category-row"><td colspan="4">Hidden Costs — Quality & Compliance</td></tr>
+        <tr>
+          <td><div class="cost-label">Quality Control & Inspection</div><div class="cost-sublabel">$400/inspection × 40 inspections/yr</div></td>
+          <td class="cost-value">${formatCurrency(costs.qualityControl)}</td>
+          <td class="cost-value"><span class="included-badge">Included ✓</span></td>
+          <td class="impact-text">Third-party QC eliminated; embedded quality infrastructure prevents failures.</td>
+        </tr>
+        <tr>
+          <td><div class="cost-label">Rework / Reject Cost</div><div class="cost-sublabel">1.19% fail rate (Li & Fung) vs. ${(failRate * 100).toFixed(1)}% (direct)</div></td>
+          <td class="cost-value">${formatCurrency(costs.reworkDirect)}</td>
+          <td class="cost-value">${formatCurrency(costs.reworkLifung)}</td>
+          <td class="impact-text">Proactive QC oversight reduces failure rates and accelerates corrective action.</td>
+        </tr>
+        <tr>
+          <td><div class="cost-label">Compliance Audit</div><div class="cost-sublabel">Social, environmental, rules of origin</div></td>
+          <td class="cost-value">${formatCurrency(costs.complianceAudit)}</td>
+          <td class="cost-value"><span class="included-badge">Included ✓</span></td>
+          <td class="impact-text">Dedicated compliance teams manage ESG requirements and regulatory documentation per factory.</td>
+        </tr>
+        <tr class="category-row"><td colspan="4">Hidden Costs — Risks & Delays</td></tr>
+        <tr>
+          <td><div class="cost-label">Production Delay Penalty</div><div class="cost-sublabel">Est. 2 late shipments/yr × $5K</div></td>
+          <td class="cost-value">${formatCurrency(costs.delayPenaltyDirect)}</td>
+          <td class="cost-value">${formatCurrency(costs.delayPenaltyLifung)}</td>
+          <td class="impact-text">Network redundancy and rapid re-routing minimize delay penalties.</td>
+        </tr>
+        <tr>
+          <td><div class="cost-label">Tariff Misclassification Risk</div><div class="cost-sublabel">Wrong ROO → 20% jumps to 40%</div></td>
+          <td class="cost-value">High Exposure</td>
+          <td class="cost-value"><span class="included-badge">Managed ✓</span></td>
+          <td class="impact-text">Single error can trigger 20% tariff penalty on $${formatNumber(orderValue)} volume; automated ROO tracking for EVFTA, CPTPP, RCEP.</td>
+        </tr>
+        <tr>
+          <td><div class="cost-label">Raw Material Disruption Risk</div><div class="cost-sublabel">95%+ imported fibers, volatile pricing</div></td>
+          <td class="cost-value">Unmitigated</td>
+          <td class="cost-value"><span class="included-badge">Network Hedged ✓</span></td>
+          <td class="impact-text">${regionInfo.name} traditionally weak in raw material sourcing; Li & Fung's 15,000+ supplier network provides regional alternatives.</td>
+        </tr>
+        <tr class="total-row">
+          <td><div>ESTIMATED ANNUAL TCO</div><div class="risk-note">Annualized estimate based on stated assumptions</div></td>
+          <td>${formatCurrency(directTotal)}<div class="risk-note">+ unquantified tariff & disruption risk</div></td>
+          <td>${formatCurrency(lifungTotal)}<div class="risk-note">Risk-managed, all-inclusive</div></td>
+          <td style="color: #e0e0e0;">Li & Fung delivers lower TCO despite visible service fee through operational efficiency, quality control, and risk mitigation.</td>
+        </tr>
+      `;
+    }
+
+    function createCharts(directTotal, lifungTotal, costs) {
+      if (comparisonChart) comparisonChart.destroy();
+      if (breakdownChart) breakdownChart.destroy();
+
+      const ctxComparison = document.getElementById('comparisonChart').getContext('2d');
+      comparisonChart = new Chart(ctxComparison, {
+        type: 'bar',
+        data: {
+          labels: ['Direct Sourcing', 'Through Li & Fung', 'Annual Savings'],
+          datasets: [{ data: [directTotal, lifungTotal, directTotal - lifungTotal], backgroundColor: ['#9e9e9e', '#1565c0', '#2e7d32'], borderWidth: 0 }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: (context) => formatCurrency(context.parsed.y) }}
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: (value) => '$' + (value/1000).toFixed(0) + 'K', font: { family: 'Inter' }}, grid: { color: '#f0f0f0' }},
+            x: { grid: { display: false }, ticks: { font: { family: 'Inter' }}}
+          }
+        }
+      });
+
+      const ctxBreakdown = document.getElementById('breakdownChart').getContext('2d');
+      breakdownChart = new Chart(ctxBreakdown, {
+        type: 'doughnut',
+        data: {
+          labels: ['Sourcing Team', 'Travel & Visits', 'Coordination', 'QC', 'Rework', 'Compliance', 'Delays'],
+          datasets: [{
+            data: [costs.sourcingTeam, costs.factoryVisits, costs.supplierCoord, costs.qualityControl, costs.reworkDirect, costs.complianceAudit, costs.delayPenaltyDirect],
+            backgroundColor: ['#E90712', '#f44336', '#ff5722', '#ff9800', '#ffc107', '#ffeb3b', '#cddc39'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11, family: 'Inter' }, padding: 8 }},
+            tooltip: {
+              callbacks: {
+                label: (context) => {
+                  const value = formatCurrency(context.parsed);
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const pct = ((context.parsed / total) * 100).toFixed(1);
+                  return context.label + ': ' + value + ' (' + pct + '%)';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function formatCurrency(value) { return '$' + Math.round(value).toLocaleString(); }
+    function formatNumber(value) { return Math.round(value).toLocaleString(); }
+    function downloadExcel() { alert('Excel export functionality: Would generate spreadsheet with all cost breakdowns and calculations.'); }
+    function shareAnalysis() { alert('Share functionality: Would generate shareable link or email with this analysis.'); }
+
+    window.addEventListener('load', () => {
+      console.log('✅ Page loaded!');
+      console.log('Testing elements...');
+      console.log('units:', document.getElementById('units'));
+      console.log('results:', document.getElementById('results'));
+      console.log('regionDisplay:', document.getElementById('regionDisplay'));
+      calculateTCO();
+    });
+  </script>
+</body>
+</html>
