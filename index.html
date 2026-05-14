@@ -450,6 +450,7 @@
       </div>
       <div class="header-text">
         <h1>TrueCost Calculator — Value Position Analysis Tool</h1>
+        <p id="regionDisplay">Greater ASEAN Region</p>
       </div>
     </div>
 
@@ -562,6 +563,8 @@
     };
 
     function calculateTCO() {
+      console.log('✅ calculateTCO called!');
+      try {
       const units = parseFloat(document.getElementById('units').value);
       const skus = parseFloat(document.getElementById('skus').value);
       const fob = parseFloat(document.getElementById('fob').value);
@@ -608,6 +611,10 @@
       document.getElementById('results').style.display = 'block';
       document.getElementById('downloadSection').style.display = 'block';
       document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+      } catch(error) {
+        console.error('❌ ERROR in calculateTCO:', error);
+        alert('Error: ' + error.message);
+      }
     }
 
     function buildTable(costs, orderValue, lifungFee, units, fob, skus, feePercent, failRate, regionInfo, directTotal, lifungTotal) {
@@ -753,7 +760,14 @@
     function downloadExcel() { alert('Excel export functionality: Would generate spreadsheet with all cost breakdowns and calculations.'); }
     function shareAnalysis() { alert('Share functionality: Would generate shareable link or email with this analysis.'); }
 
-    window.addEventListener('load', () => calculateTCO());
+    window.addEventListener('load', () => {
+      console.log('✅ Page loaded!');
+      console.log('Testing elements...');
+      console.log('units:', document.getElementById('units'));
+      console.log('results:', document.getElementById('results'));
+      console.log('regionDisplay:', document.getElementById('regionDisplay'));
+      calculateTCO();
+    });
   </script>
 </body>
 </html>
