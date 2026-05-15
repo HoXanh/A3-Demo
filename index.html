@@ -492,6 +492,16 @@
           <input type="number" id="directFailRate" value="3.5" min="0" max="10" step="0.1">
           <span class="input-help">Quality rejection rate</span>
         </div>
+        <div class="input-field">
+          <label for="inspections">Inspection (Inspections/year)</label>
+          <input type="number" id="inspections" value="40" min="0" step="1">
+          <span class="input-help">Number of third-party inspections per year</span>
+        </div>
+        <div class="input-field">
+          <label for="lateShipments">Late Shipments (Late Shipments/year)</label>
+          <input type="number" id="lateShipments" value="2" min="0" step="1">
+          <span class="input-help">Estimated delayed shipments per year</span>
+        </div>
       </div>
       <button class="calculate-button" onclick="calculateTCO()">Calculate TCO Comparison</button>
     </div>
@@ -563,13 +573,13 @@
     };
 
     function calculateTCO() {
-      console.log('✅ calculateTCO called!');
-      try {
       const units = parseFloat(document.getElementById('units').value);
       const skus = parseFloat(document.getElementById('skus').value);
       const fob = parseFloat(document.getElementById('fob').value);
       const lifungFeePercent = parseFloat(document.getElementById('lifungFee').value);
       const directFailRate = parseFloat(document.getElementById('directFailRate').value) / 100;
+      const inspections = parseFloat(document.getElementById('inspections').value);
+      const lateShipments = parseFloat(document.getElementById('lateShipments').value);
       const region = document.getElementById('region').value;
       const regionInfo = regionData[region];
       
@@ -584,12 +594,12 @@
         sourcingTeam: 50000 * scaleFactor * regionInfo.complexity,
         factoryVisits: regionInfo.travelCost * scaleFactor,
         supplierCoord: 12000 * scaleFactor * regionInfo.complexity,
-        qualityControl: 16000 * scaleFactor,
+        qualityControl: inspections * 400 * scaleFactor,
         reworkDirect: orderValue * directFailRate,
         reworkLifung: orderValue * 0.0119,
         complianceAudit: 15000 * scaleFactor * regionInfo.complexity,
-        delayPenaltyDirect: 10000 * scaleFactor,
-        delayPenaltyLifung: 2500 * scaleFactor
+        delayPenaltyDirect: lateShipments * 5000 * scaleFactor,
+        delayPenaltyLifung: lateShipments * 1250 * scaleFactor
       };
 
       const directTotal = costs.productCost + costs.sourcingTeam + costs.factoryVisits + 
@@ -605,19 +615,15 @@
       document.getElementById('savings').textContent = formatCurrency(savings);
       document.getElementById('savingsPercent').textContent = savingsPercent + '% cost reduction';
 
-      buildTable(costs, orderValue, lifungFee, units, fob, skus, lifungFeePercent, directFailRate, regionInfo, directTotal, lifungTotal);
+      buildTable(costs, orderValue, lifungFee, units, fob, skus, lifungFeePercent, directFailRate, inspections, lateShipments, regionInfo, directTotal, lifungTotal);
       createCharts(directTotal, lifungTotal, costs);
 
       document.getElementById('results').style.display = 'block';
       document.getElementById('downloadSection').style.display = 'block';
       document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-      } catch(error) {
-        console.error('❌ ERROR in calculateTCO:', error);
-        alert('Error: ' + error.message);
-      }
     }
 
-    function buildTable(costs, orderValue, lifungFee, units, fob, skus, feePercent, failRate, regionInfo, directTotal, lifungTotal) {
+    function buildTable(costs, orderValue, lifungFee, units, fob, skus, feePercent, failRate, inspections, lateShipments, regionInfo, directTotal, lifungTotal) {
       const tbody = document.getElementById('costTableBody');
       tbody.innerHTML = `
         <tr class="category-row"><td colspan="4">Visible Costs</td></tr>
@@ -654,7 +660,7 @@
         </tr>
         <tr class="category-row"><td colspan="4">Hidden Costs — Quality & Compliance</td></tr>
         <tr>
-          <td><div class="cost-label">Quality Control & Inspection</div><div class="cost-sublabel">$400/inspection × 40 inspections/yr</div></td>
+          <td><div class="cost-label">Quality Control & Inspection</div><div class="cost-sublabel">$400/inspection × ${formatNumber(inspections)} inspections/yr</div></td>
           <td class="cost-value">${formatCurrency(costs.qualityControl)}</td>
           <td class="cost-value"><span class="included-badge">Included ✓</span></td>
           <td class="impact-text">Third-party QC eliminated; embedded quality infrastructure prevents failures.</td>
@@ -673,7 +679,7 @@
         </tr>
         <tr class="category-row"><td colspan="4">Hidden Costs — Risks & Delays</td></tr>
         <tr>
-          <td><div class="cost-label">Production Delay Penalty</div><div class="cost-sublabel">Est. 2 late shipments/yr × $5K</div></td>
+          <td><div class="cost-label">Production Delay Penalty</div><div class="cost-sublabel">Est. ${formatNumber(lateShipments)} late shipments/yr × $5K</div></td>
           <td class="cost-value">${formatCurrency(costs.delayPenaltyDirect)}</td>
           <td class="cost-value">${formatCurrency(costs.delayPenaltyLifung)}</td>
           <td class="impact-text">Network redundancy and rapid re-routing minimize delay penalties.</td>
@@ -760,14 +766,7 @@
     function downloadExcel() { alert('Excel export functionality: Would generate spreadsheet with all cost breakdowns and calculations.'); }
     function shareAnalysis() { alert('Share functionality: Would generate shareable link or email with this analysis.'); }
 
-    window.addEventListener('load', () => {
-      console.log('✅ Page loaded!');
-      console.log('Testing elements...');
-      console.log('units:', document.getElementById('units'));
-      console.log('results:', document.getElementById('results'));
-      console.log('regionDisplay:', document.getElementById('regionDisplay'));
-      calculateTCO();
-    });
+    window.addEventListener('load', () => calculateTCO());
   </script>
 </body>
 </html>
