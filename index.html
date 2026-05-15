@@ -439,10 +439,223 @@
         display: none;
       }
     }
+
+
+    html { scroll-behavior: smooth; }
+    /* ── Navigation Bar ── */
+    .nav-bar {
+      background: #ffffff;
+      border-bottom: 2px solid #E90712;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      margin-bottom: 0;
+    }
+
+    .nav-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333333;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      color: #E90712;
+      border-bottom-color: #E90712;
+    }
+
+    .nav-link.active {
+      color: #E90712;
+      font-weight: 600;
+      border-bottom-color: #E90712;
+    }
+
+    /* ── Risk Insight Sections ── */
+    .risk-section {
+      background: white;
+      border: 1px solid #e5e5e5;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .risk-section-header {
+      background: #263238;
+      color: white;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .risk-section-header .risk-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .risk-section-header h2 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin: 0;
+    }
+
+    .risk-section-header p {
+      font-size: 12px;
+      color: #b0bec5;
+      margin: 3px 0 0;
+      font-weight: 400;
+    }
+
+    .risk-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 900px) {
+      .risk-columns { grid-template-columns: 1fr; }
+    }
+
+    .risk-col {
+      padding: 28px 32px;
+    }
+
+    .risk-col.risk-left {
+      border-right: 1px solid #e5e5e5;
+      background: #fff8f8;
+    }
+
+    .risk-col.risk-right {
+      background: #f8fbfd;
+    }
+
+    .risk-col-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid currentColor;
+    }
+
+    .risk-col.risk-left .risk-col-title {
+      color: #c62828;
+    }
+
+    .risk-col.risk-right .risk-col-title {
+      color: #1565c0;
+    }
+
+    .risk-item {
+      margin-bottom: 20px;
+    }
+
+    .risk-item:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .risk-item-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .risk-col.risk-left .risk-item-title::before {
+      content: '✕';
+      color: #c62828;
+      font-size: 11px;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .risk-col.risk-right .risk-item-title::before {
+      content: '✓';
+      color: #1565c0;
+      font-size: 11px;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .risk-item-body {
+      font-size: 13px;
+      color: #424242;
+      line-height: 1.6;
+      padding-left: 18px;
+    }
+
+    .risk-summary-bar {
+      background: #f5f5f5;
+      border-top: 1px solid #e5e5e5;
+      padding: 16px 32px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .risk-summary-bar .rs-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: #666;
+      margin-right: 4px;
+    }
+
+    .rs-tag {
+      display: inline-block;
+      background: #e3f2fd;
+      color: #1565c0;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border: 1px solid #bbdefb;
+    }
+
+    @media (max-width: 768px) {
+      .nav-inner { padding: 0 20px; overflow-x: auto; }
+      .risk-col { padding: 20px; }
+      .risk-section-header { padding: 16px 20px; }
+      .risk-summary-bar { padding: 14px 20px; }
+    }
+
+    @media print {
+      .nav-bar { display: none; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Navigation Bar -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a href="#calculator" class="nav-link active">TCO Calculator</a>
+      <a href="#sourcing-risk" class="nav-link">Raw Material Risk</a>
+      <a href="#compliance-risk" class="nav-link">Compliance &amp; ESG Risk</a>
+    </div>
+  </nav>
+
+  <div class="container" id="calculator">
     <div class="header">
       <div class="logo">
         <img src="https://cdn.brandfetch.io/idX8OEsFLl/theme/dark/logo.svg?c=1bxid64Mup7aczewSAYMX&t=1778719549322" alt="Li & Fung Logo">
@@ -575,6 +788,159 @@
       </div>
     </div>
   </div>
+
+    <!-- ─────────────────────────────────────────────
+         SECTION: Raw Material Sourcing Risk
+    ──────────────────────────────────────────────── -->
+    <div id="sourcing-risk" class="risk-section">
+      <div class="risk-section-header">
+        <span class="risk-icon">🏭</span>
+        <div>
+          <h2>Risk of Direct Sourcing — Raw Material &amp; Supply Chain</h2>
+          <p>Why disintermediation creates hidden operational exposure across the Greater ASEAN region</p>
+        </div>
+      </div>
+
+      <div class="risk-columns">
+        <!-- LEFT: Direct Sourcing Risks -->
+        <div class="risk-col risk-left">
+          <div class="risk-col-title">✕ Risks of Going Direct</div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Sourcing Complexity &amp; Fragmentation</div>
+            <div class="risk-item-body">Navigating a fragmented regional market without established networks can lead to raw material availability issues. Client must independently manage the gap between material origins and manufacturing locations.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Technical Oversight &amp; Quality Failure</div>
+            <div class="risk-item-body">Bypassing specialized oversight means losing the technical oversight required to ensure raw materials meet strict standards before assembly. This increases the risk of quality control challenges and expensive rework costs.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Traceability &amp; Trade Benefit Loss</div>
+            <div class="risk-item-body">Sourcing in ASEAN involves complex rules-of-origin. Without end-to-end transparency through digitalization, clients face limited supply chain visibility at the material level — making it difficult to qualify for duty-free tariff benefits.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Digitalization vs. Manual Management</div>
+            <div class="risk-item-body">Since approximately 70% of industry stakeholders are not digital-natives, clients will struggle to obtain timely updates from material suppliers. This leads to fragmented supplier coordination where factories may sit idle due to manual communication breakdowns.</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Li & Fung Solutions -->
+        <div class="risk-col risk-right">
+          <div class="risk-col-title">✓ How Li &amp; Fung Serves This Issue</div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Providing Specialized Regional Expertise</div>
+            <div class="risk-item-body">Li &amp; Fung utilizes its factory matching and raw material sourcing services to bridge regional gaps. By managing a network across 40 markets, they find the most available materials and ensure synchronization with manufacturing capacity.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Implementing "Quality at the Source"</div>
+            <div class="risk-item-body">Through manufacturing oversight and production follow-up, Li &amp; Fung maintains a high baseline of quality. Catching fabric defects before they reach the factory prevents the chain reaction of rework costs and production stalls.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Delivering End-to-End Traceability</div>
+            <div class="risk-item-body">The LF Digital Platform creates a digital paper trail from the material source to the factory. This verifiable data allows clients to satisfy rules-of-origin requirements and capitalize on international trade agreements, directly reducing the total cost of goods.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Synchronizing the "Supply Chain of the Future"</div>
+            <div class="risk-item-body">Li &amp; Fung's digital ecosystem overcomes the digital divide of non-digital-native suppliers. By acting as the central hub, LF synchronizes material readiness with factory capacity, replacing manual fragmentation with streamlined digital coordination.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-summary-bar">
+        <span class="rs-label">Li &amp; Fung Helps Clients:</span>
+        <span class="rs-tag">Navigate fragmented regional markets</span>
+        <span class="rs-tag">Guarantee material quality</span>
+        <span class="rs-tag">Secure trade &amp; tariff benefits</span>
+        <span class="rs-tag">Ensure production stability</span>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SECTION: Compliance & ESG Risk
+    ──────────────────────────────────────────────── -->
+    <div id="compliance-risk" class="risk-section">
+      <div class="risk-section-header">
+        <span class="risk-icon">🌿</span>
+        <div>
+          <h2>Risk of Direct Sourcing — Compliance &amp; ESG</h2>
+          <p>How disintermediation exposes clients to regulatory, legal, and brand reputation risk</p>
+        </div>
+      </div>
+
+      <div class="risk-columns">
+        <!-- LEFT: Direct Sourcing Risks -->
+        <div class="risk-col risk-left">
+          <div class="risk-col-title">✕ Risks of Going Direct</div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Compliance Complexity &amp; Administrative Burden</div>
+            <div class="risk-item-body">While customers may nominate suppliers, bypassing LF means the client must independently manage supplier audit follow-ups, documentation collection, and social/labor standards monitoring — requiring specialized personnel and cross-country knowledge.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Limited Internal Capability &amp; Digital Readiness</div>
+            <div class="risk-item-body">With approximately 70% of industry stakeholders not digital-natives, it is extremely difficult for a direct-sourcing client to implement digital audit systems or documentation tracking, often leading to inconsistent factory reporting and missing documents.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Regulatory &amp; Trade Exposure</div>
+            <div class="risk-item-body">Sourcing across Greater ASEAN involves complex rules-of-origin and tariff regulations. Miscalculations by a direct-sourcing client can result in heavy financial fines or shipment seizures at customs.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">ESG &amp; Brand Reputation Risk</div>
+            <div class="risk-item-body">In the Supply Chain of the Future, transparency is non-negotiable. Bypassing LF creates a transparency loss where the client can no longer verify carbon reduction or worker wellbeing data — increasing the risk of PR scandals or market bans, particularly in the EU.</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Li & Fung Solutions -->
+        <div class="risk-col risk-right">
+          <div class="risk-col-title">✓ How Li &amp; Fung Serves This Issue</div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Managing Global Compliance Coordination</div>
+            <div class="risk-item-body">LF manages the entire coordination process with designated suppliers on the client's behalf. By acting as the intermediary, LF eliminates the need for clients to build expensive internal compliance departments for every sourcing market.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Bridging the Digital Divide with the LF Digital Platform</div>
+            <div class="risk-item-body">LF's digital ecosystem is specifically designed to overcome low digital readiness. It provides automated documentation tracking and digital audit systems that prevent operational delays typically caused by manual reporting in non-digital-native environments.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Enforcing a Robust Supplier Code of Conduct</div>
+            <div class="risk-item-body">Li &amp; Fung uses its established Supplier Code of Conduct to enforce international social and labor standards across Vietnam, Indonesia, and Bangladesh — allowing clients to avoid audit costs, a major hidden expense of going direct.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Expert Risk Mitigation for Trade &amp; Tariffs</div>
+            <div class="risk-item-body">Li &amp; Fung manages the complexities of rules-of-origin and trade regulations, preventing costly legal errors and ensuring shipments move through customs without the risk of seizure or fines.</div>
+          </div>
+
+          <div class="risk-item">
+            <div class="risk-item-title">Advancing ESG Through Science-Based Targets</div>
+            <div class="risk-item-body">By aligning with UN Sustainable Development Goals and committing to Science-Based Targets, Li &amp; Fung provides end-to-end transparency that protects brand reputation and ensures compliance with global sustainability standards including EU market access requirements.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="risk-summary-bar">
+        <span class="rs-label">Li &amp; Fung Helps Clients:</span>
+        <span class="rs-tag">Reduce internal management costs</span>
+        <span class="rs-tag">Avoid legal &amp; financial penalties</span>
+        <span class="rs-tag">Protect brand equity</span>
+        <span class="rs-tag">Ensure market access</span>
+      </div>
+    </div>
+
+
 
   <script>
     let comparisonChart = null;
@@ -786,6 +1152,23 @@
     function shareAnalysis() { alert('Share functionality: Would generate shareable link or email with this analysis.'); }
 
     window.addEventListener('load', () => calculateTCO());
+
+    // Nav active link on scroll
+    (function() {
+      const sections = ['calculator', 'sourcing-risk', 'compliance-risk'];
+      const links = document.querySelectorAll('.nav-link');
+      function onScroll() {
+        let current = sections[0];
+        sections.forEach(id => {
+          const el = document.getElementById(id);
+          if (el && window.scrollY >= el.offsetTop - 80) current = id;
+        });
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+        });
+      }
+      window.addEventListener('scroll', onScroll);
+    })();
   </script>
 </body>
 </html>
